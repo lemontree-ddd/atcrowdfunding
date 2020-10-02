@@ -1,0 +1,7 @@
+# Project exclude paths
+/atcrowdfunding05-common-util/target/
+/atcrowdfunding06-common-reverse/target/
+/parent/atcrowdfunding02-admin-webui/target/
+/parent/atcrowdfunding03-admin-component/target/
+/parent/atcrowdfunding04-admin-entity/target/
+/pro05-spring-security/target/

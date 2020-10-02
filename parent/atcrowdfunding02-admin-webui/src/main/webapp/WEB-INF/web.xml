@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+		  http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+           version="2.5">
+
+    <!--配置CharacterEncodingFilter解决POST请求的字符乱码问题-->
+    <filter>
+        <filter-name>CharacterEncodingFilter</filter-name>
+        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+        <!--强制请求进行编码-->
+        <init-param>
+            <param-name>forceRequestEncoding</param-name>
+            <param-value>true</param-value>
+        </init-param>
+        <!--强制响应进行编码-->
+        <init-param>
+            <param-name>forceResponseEncoding</param-name>
+            <param-value>true</param-value></init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>CharacterEncodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!-- springSecurity过滤器
+    Security权限框架是基于Filter的 能够拦截Web所有请求
+    -->
+    <filter>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+
+
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+
+    <!-- 加载Spring的配置文件，根据Spring配置文件初始化IOC容器 -->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath:spring-persist-*.xml</param-value>
+    </context-param>
+
+
+
+    <!--前端控制器-->
+    <servlet>
+        <servlet-name>springDispatcherServlet</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath:/spring-web-mvc.xml</param-value>
+            <!-- 将两个IOC容器合二为一 -->
+            <!--<param-value>classpath:/spring-*.xml</param-value>-->
+        </init-param>
+        <!--servlet启动加载，servlet原本是第一次访问创建对象
+        load-on-startup:服务器启动的时候创建对象，值越小优先级越高,越先创建对象
+        -->
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>springDispatcherServlet</servlet-name>
+        <!--DispatcherServlet映射的URL地址大白话：什么样的访问地址会交给SpringMVC来处理&ndash;&gt;
+        url-pattern配置方式一：/表示拦截所有的请求&ndash;&gt;
+        url-pattern配置方式二：配置请求扩展名
+        优点1：xxx.css、xxx.js、xxx.png等静态资源完全不经过SpringMVC。不需要特殊处理
+        优点2：可以实现伪静态效果/表面上看上去是访问一个HTML文件的静态资源，实际上是经过Java代码运算
+        伪静态作用1：为黑客入侵增加难度
+        伪静态作用2：有利于seo优化（方便搜索引擎更容易找到我们的项目。）
+        缺点：不符合Restful风格-->
+
+        <url-pattern>*.html</url-pattern>
+        <!--ajax请求的是。html,实际服务器给浏览器放回的是json数据，不匹配406错误-->
+        <url-pattern>*.json</url-pattern>
+    </servlet-mapping>
+
+</web-app>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+				        http://www.springframework.org/schema/beans/spring-beans.xsd
+				        http://www.springframework.org/schema/context
+				        http://www.springframework.org/schema/context/spring-context.xsd
+					    http://www.springframework.org/schema/mvc
+                        http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+
+    <context:component-scan base-package="com.baidu.mvc"/>
+
+    <!-- 配置视图解析器 -->
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/pages/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+    <!-- 配置基于XML的异常映射 -->
+    <bean id="simpleMappingExceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+        <!-- 配置异常的类型和视图页面的关系 -->
+        <property name="exceptionMappings">
+            <props>
+                <!-- Key属性指定异常全类名 标签体中写对应的视图（值要拼前后缀得到具体路径 -->
+                <prop key="java.lang.Exception">system-error</prop>
+            </props>
+        </property>
+    </bean>
+
+    <!-- 配置view-controller，直接把请求地址和视图名称关联起来，不必写handler方法了
+        handler方法
+        @RequestMapping("/admin/to/login/page.html")
+        public String toLoginPage(){
+            return "admin-login";
+        }
+        用<mvc:view-controller />代替handler方法
+     -->
+    <mvc:view-controller path="admin/to/login/page.html" view-name="admin-login"/>
+    <mvc:view-controller path="admin/to/main/page.html" view-name="admin-main"/>
+    <!-- 跳转到添加管理员 模态框 -->
+    <mvc:view-controller path="admin/to/add/page.html" view-name="admin-add"/>
+
+    <mvc:view-controller path="/role/to/page.html" view-name="role-page"/>
+    <mvc:view-controller path="/menu/to/page.html" view-name="menu-page"/>
+
+
+    <!-- 注册拦截器 使用SpringSecurty后，自定义的拦截器就不用了 -->
+<!--    <mvc:interceptors>
+        <mvc:interceptor>
+                 mvc:mapping配置要拦截的资源
+                 /*对应一层路径 比如:/aaa
+                 /**对应多层路径 比如 /aaa/bbb 或者/aaa/bbb/ccc
+
+            <mvc:mapping path="/**"/>
+                 mvc:exclude-mapping配置 不拦截的资源
+                 /*对应一层路径 比如:/aaa
+                 /**对应多层路径 比如 /aaa/bbb 或者/aaa/bbb/ccc
+
+            <mvc:exclude-mapping path="/admin/to/login/page.html"/>
+            <mvc:exclude-mapping path="/admin/do/login.html"/>
+            <mvc:exclude-mapping path="/admin/do/logout.html"/>
+            配置拦截器的类 &ndash;&gt;&ndash;&gt;
+            <bean class="com.baidu.mvc.interceptor.LoginInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>-->
+
+    <!-- 配置SpringMVC的注解驱动 -->
+    <mvc:annotation-driven/>
+<!--    <mvc:default-servlet-handler/>-->
+</beans>
